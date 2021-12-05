@@ -12,11 +12,20 @@
         android:theme="@style/Theme.Jmartandroid"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".CreateProductActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AboutMeActivity"
+            android:exported="false"
+            android:label="About Me" />
+        <activity
             android:name=".MainActivity"
-            android:exported="true" />
+            android:exported="false"
+            android:label="Jmart" />
         <activity
             android:name=".RegisterActivity"
-            android:exported="true" />
+            android:exported="false"
+            android:label="Register" />
         <activity
             android:name=".LoginActivity"
             android:exported="true">

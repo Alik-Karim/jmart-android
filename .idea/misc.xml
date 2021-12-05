@@ -3,9 +3,19 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/jmartandroid/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.14322916666666666" />
+        <entry key="..\:/jmartandroid/app/src/main/res/drawable/ic_baseline_add_box_24.xml" value="0.26614583333333336" />
+        <entry key="..\:/jmartandroid/app/src/main/res/drawable/ic_baseline_person_24.xml" value="0.26614583333333336" />
+        <entry key="..\:/jmartandroid/app/src/main/res/drawable/ic_launcher_background.xml" value="0.14375" />
+        <entry key="..\:/jmartandroid/app/src/main/res/drawable/ic_search_black_24dp.xml" value="0.26614583333333336" />
+        <entry key="..\:/jmartandroid/app/src/main/res/layout/activity_about_me.xml" value="0.25" />
+        <entry key="..\:/jmartandroid/app/src/main/res/layout/activity_create_product.xml" value="0.25" />
         <entry key="..\:/jmartandroid/app/src/main/res/layout/activity_login.xml" value="0.264" />
         <entry key="..\:/jmartandroid/app/src/main/res/layout/activity_main.xml" value="0.25" />
         <entry key="..\:/jmartandroid/app/src/main/res/layout/activity_register.xml" value="0.25" />
+        <entry key="..\:/jmartandroid/app/src/main/res/layout/recyclerview_row.xml" value="0.25" />
+        <entry key="..\:/jmartandroid/app/src/main/res/menu/menu.xml" value="0.25" />
+        <entry key="..\:/jmartandroid/app/src/main/res/menu/menu_main.xml" value="0.152" />
       </map>
     </option>
   </component>
