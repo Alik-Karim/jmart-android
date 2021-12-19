@@ -31,20 +31,14 @@ import com.MalikJmartMR.jmart_android.request.RegisterRequest;
 import com.MalikJmartMR.jmart_android.request.RegisterStoreRequest;
 
 public class AboutMeActivity extends AppCompatActivity {
-    private TextView tv_userName;
-    private TextView tv_userEmail;
-    private TextView tv_userBalance;
-    private Button btnTopUp;
-    private Button btnRegisterStore;
+    private TextView tv_userName, tv_userEmail, tv_userBalance;
+    private Button btnTopUp, btnRegisterStore, btnInvoiceHistory;
     private EditText et_topUpAmount;
     private CardView cv_storeExists;
     //CardView Register Store
     private CardView cv_registerStore;
-    private EditText et_storeName;
-    private EditText et_storeAddress;
-    private EditText et_storePhoneNumber;
-    private Button btnRegisterStoreCancel;
-    private Button btnRegisterStoreConfirm;
+    private EditText et_storeName, et_storeAddress, et_storePhoneNumber;
+    private Button btnRegisterStoreCancel, btnRegisterStoreConfirm;
     //CardView Store Exists
     private TextView tv_storeNameF;
     private TextView tv_storeAddressF;
@@ -63,13 +57,22 @@ public class AboutMeActivity extends AppCompatActivity {
         tv_userName.setText(LoginActivity.getLoggedAccount().name);
         tv_userEmail.setText(LoginActivity.getLoggedAccount().email);
         tv_userBalance.setText(String.valueOf(LoginActivity.getLoggedAccount().balance));
+        //Button to redirect to InvoiceHistory Activity
+        btnInvoiceHistory = findViewById(R.id.btnInvoiceHistory);
+        btnInvoiceHistory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), InvoiceHistoryActivity.class);
+                startActivity(intent);
+            }
+        });
         //Top Up button handler
         btnTopUp = findViewById(R.id.btnTopUp);
         btnTopUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String balance = et_topUpAmount.getText().toString();
-                String URL = "http://10.0.2.2:8069/account/"+LoginActivity.getLoggedAccount().id+"/topUp";
+                String URL = "http://10.0.2.2:8069/account/" + LoginActivity.getLoggedAccount().id + "/topUp";
                 StringRequest topUpRequest = new StringRequest(Request.Method.POST, URL, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -83,15 +86,15 @@ public class AboutMeActivity extends AppCompatActivity {
                             Toast.makeText(getApplicationContext(), "Top Up unsuccessful, error occurred", Toast.LENGTH_LONG).show();
                         }
                     }
-                }, new Response.ErrorListener(){
+                }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Toast.makeText(getApplicationContext(), "Top Up unsuccessful, error occurred", Toast.LENGTH_LONG).show();
                     }
-                }){
+                }) {
                     @Override
-                    protected Map<String, String> getParams(){
-                        Map<String, String>  params = new HashMap<String, String>();
+                    protected Map<String, String> getParams() {
+                        Map<String, String> params = new HashMap<String, String>();
                         params.put("balance", balance);
                         return params;
                     }
@@ -108,7 +111,7 @@ public class AboutMeActivity extends AppCompatActivity {
         et_storePhoneNumber = findViewById(R.id.et_storePhoneNumber);
         btnRegisterStoreCancel = findViewById(R.id.btnRegisterStoreCancel);
         btnRegisterStoreConfirm = findViewById(R.id.btnRegisterStoreConfirm);
-        if(LoginActivity.getLoggedAccount().store != null){
+        if (LoginActivity.getLoggedAccount().store != null) {
             btnRegisterStore.setVisibility(View.GONE);
             cv_storeExists.setVisibility(View.VISIBLE);
             //Show the existing store
@@ -129,7 +132,7 @@ public class AboutMeActivity extends AppCompatActivity {
                 cv_registerStore.setVisibility(View.VISIBLE);
             }
         });
-        btnRegisterStoreCancel.setOnClickListener(new View.OnClickListener(){
+        btnRegisterStoreCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 btnRegisterStore.setVisibility(View.VISIBLE);
@@ -142,7 +145,20 @@ public class AboutMeActivity extends AppCompatActivity {
                 String name = et_storeName.getText().toString();
                 String address = et_storeAddress.getText().toString();
                 String phoneNumber = et_storePhoneNumber.getText().toString();
-                RegisterStoreRequest registerStoreRequest = new RegisterStoreRequest(LoginActivity.getLoggedAccount().id, name, address ,phoneNumber, new Response.Listener<String>() {
+                if(name.isEmpty() || address.isEmpty() || phoneNumber.isEmpty()) {
+                    Toast.makeText(getApplicationContext(), "Value cannot be blank", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                try{
+                    int number = Integer.parseInt(phoneNumber);
+                }
+                catch (NumberFormatException ex){
+                    ex.printStackTrace();
+                    Toast.makeText(getApplicationContext(), "Phone number must be digit", Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+                RegisterStoreRequest registerStoreRequest = new RegisterStoreRequest(LoginActivity.getLoggedAccount().id, name, address, phoneNumber, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         LoginActivity.insertLoggedAccountStore(response);
@@ -155,7 +171,7 @@ public class AboutMeActivity extends AppCompatActivity {
                             Toast.makeText(getApplicationContext(), "Register Store unsuccessful, error occurred", Toast.LENGTH_LONG).show();
                         }
                     }
-                }, new Response.ErrorListener(){
+                }, new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Toast.makeText(getApplicationContext(), "Register Store unsuccessful, error occurred", Toast.LENGTH_LONG).show();

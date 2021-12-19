@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.MalikJmartMR.jmart_android">
     <uses-permission android:name="android.permission.INTERNET"/>
 
@@ -11,6 +12,25 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Jmartandroid"
         android:usesCleartextTraffic="true">
+        <activity
+            android:name=".MyRecyclerViewInvoicesAdapter"
+            android:exported="false" />
+        <activity
+            android:name=".MyRecyclerViewTransactionsAdapter"
+            android:exported="false" />
+        <activity
+            android:name=".MyRecyclerViewAdapter"
+            android:exported="false" />
+        <activity
+            android:name=".InvoiceHistoryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PaymentActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ProductDetailActivity"
+            android:exported="false"
+            android:label="Product Detail" />
         <activity
             android:name=".CreateProductActivity"
             android:exported="false" />

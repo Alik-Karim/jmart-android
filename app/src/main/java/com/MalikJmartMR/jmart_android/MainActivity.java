@@ -43,6 +43,7 @@ import java.util.List;
 import com.MalikJmartMR.jmart_android.model.Product;
 
 public class MainActivity extends AppCompatActivity implements MyRecyclerViewAdapter.ItemClickListener {
+    public static final String EXTRA_PRODUCTID = "com.MalikJmartMR.jmart_android.EXTRA_PRODUCTID";
     private static final Gson gson = new Gson();
     MyRecyclerViewAdapter adapter;
     private TabLayout mainTabLayout;
@@ -63,6 +64,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
     private Button btnApply;
     private Button btnClear;
     private Spinner spinner_filterCategory;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,6 +112,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
         adapter.setClickListener(this);
         recyclerView.setAdapter(adapter);
         recyclerView.addItemDecoration(new DividerItemDecoration(this, DividerItemDecoration.VERTICAL)); //Add divider to each row
+
         btnPrev = findViewById(R.id.btnPrev);
         btnNext = findViewById(R.id.btnNext);
         btnGo   = findViewById(R.id.btnGo);
@@ -134,7 +137,13 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
         btnGo.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                page = Integer.parseInt(et_page.getText().toString());
+                try{
+                    page = Integer.parseInt(et_page.getText().toString());
+                }catch (NumberFormatException e){
+                    e.printStackTrace();
+                    Toast.makeText(getApplicationContext(), "Please input a valid page number.", Toast.LENGTH_LONG).show();
+                    page = 0;
+                }
                 fetchProduct(productNames, page, queue, true);
             }
         });
@@ -160,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
                 String lowestPrice= et_lowestPrice.getText().toString();
                 String highestPrice = et_highestPrice.getText().toString();
                 String category = spinner_filterCategory.getSelectedItem().toString();
-                StringRequest filterRequest = new StringRequest(Request.Method.GET, "http://10.0.2.2:5000/product/getFiltered?pageSize=10&accountId="+LoginActivity.getLoggedAccount().id+"&search="+productName+"&minPrice="+lowestPrice+"&maxPrice="+highestPrice+"&category="+category, new Response.Listener<String>() {
+                StringRequest filterRequest = new StringRequest(Request.Method.GET, "http://10.0.2.2:8069/product/getFiltered?pageSize=10&accountId="+LoginActivity.getLoggedAccount().id+"&search="+productName+"&minPrice="+lowestPrice+"&maxPrice="+highestPrice+"&category="+category, new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
                         JsonReader reader = new JsonReader(new StringReader(response)); //Use reader to read json response of filtered products
@@ -171,6 +180,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
                                 productNames.add(gson.fromJson(reader, Product.class)); //Add the products from reader to the arraylist
                             }
                             adapter.refresh(productNames);                              //Refresh/update displaying the list
+                            reader.close();
                         } catch (Exception e) {
                             e.printStackTrace();
                             Toast.makeText(getApplicationContext(), "Filter product unsuccessful, error occurred", Toast.LENGTH_LONG).show();
@@ -206,7 +216,7 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
     }
     //Fetch Products Request Method
     public void fetchProduct(List<Product> productNames, int page, RequestQueue queue, boolean refreshAdapter){
-        StringRequest fetchProductsRequest = new StringRequest(Request.Method.GET, "http://10.0.2.2:5000/product/page?page="+page+"&pageSize=10", new Response.Listener<String>() {
+        StringRequest fetchProductsRequest = new StringRequest(Request.Method.GET, "http://10.0.2.2:8069/product/page?page="+page+"&pageSize=10", new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 JsonReader reader = new JsonReader(new StringReader(response));
@@ -235,7 +245,10 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
     //RecycleView Item ClickListener
     @Override
     public void onItemClick(View view, int position) {
-        Toast.makeText(getApplicationContext(), "Testing click product", Toast.LENGTH_LONG).show();
+        int clickedItemId = adapter.getClickedItemId(position);
+        Intent intent = new Intent(getApplicationContext(), ProductDetailActivity.class);
+        intent.putExtra(EXTRA_PRODUCTID, clickedItemId);
+        startActivity(intent);
     }
     //Menu
     @Override
@@ -244,18 +257,15 @@ public class MainActivity extends AppCompatActivity implements MyRecyclerViewAda
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
         //Check if account has no store yet, dont display the add product menu item
-//        if(LoginActivity.getLoggedAccount().store == null){
-//            menu.getItem(1).setVisible(false);
-//        }
+        if(LoginActivity.getLoggedAccount().store == null){
+            menu.getItem(0).setVisible(false);
+        }
         return true;
     }
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
-            case R.id.menu_search:
-//                startActivity(new Intent(this, RegisterActivity.class));
-                return true;
             case R.id.menu_add:
                 startActivity(new Intent(this, CreateProductActivity.class));
                 return true;
